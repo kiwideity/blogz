@@ -7,7 +7,7 @@ app.config['DEBUG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://blogz:bandit@localhost:8889/blogz'
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
-#app.secret_key = "mF7%z9LWw4$zj20a"
+app.secret_key = "laughter"
 
 
 class Blog(db.Model):
@@ -58,7 +58,7 @@ def blog():
 
     if user_id:
         posts = Blog.query.filter_by(owner_id=user_id)
-        return render_template('user.html', posts=posts, header="User Posts")
+        return render_template('singleUser.html', posts=posts, header="User Posts")
     if blog_id:
         post = Blog.query.get(blog_id)
         return render_template('entry.html', post=post)
@@ -100,12 +100,17 @@ def login():
         password = request.form['password']
 
         user = User.query.filter_by(username=username).first()  # if user doesn't exist, user == None
-        if user and user.password == password:  # conditional breaks if user == None
+        if user and user.password == password:  
             session['username'] = username
-            flash('Logged in')
+            flash('You are logged in!')
             return redirect('/newpost')
+            
+        elif not user:
+            flash('User does not exist', 'error')
+           
+        
         else:
-            flash('User password is incorrect, or user does not exist', 'error')
+            flash('Password is incorrect', 'error')
 
     return render_template('login.html', header='Login')
 
