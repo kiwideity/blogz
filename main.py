@@ -9,7 +9,7 @@ app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 app.secret_key = "laughter"
 
-
+# Ammended Blog class
 class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120))
@@ -25,7 +25,7 @@ class Blog(db.Model):
         self.pub_date = pub_date
         self.owner = owner
 
-
+# user class
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120), unique=True)
@@ -123,13 +123,16 @@ def signup():
         verify = request.form['verify']
 
         existing_user = User.query.filter_by(username=username).first()
-
-        if password != verify:
-            flash('Password does not match', "error")
+        if existing_user:
+            flash('User already exists', 'error')
+        elif  username == "" or password =="" or verify == "":
+            flash('Fields cannot be empty', "error")
         elif len(username) < 3 or len(password) < 3:
             flash('Username and password must be more than 3 characters', 'error')
-        elif existing_user:
-            flash('User already exists', 'error')
+        elif password != verify:
+            flash('Password does not match', "error")
+        
+        
         else:
             new_user = User(username, password)
             db.session.add(new_user)
