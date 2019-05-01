@@ -36,20 +36,22 @@ class User(db.Model):
         self.username = username
         self.password = password
 
+allowed_routes = ['login', 'signup', 'index', 'blog', 'logout']        
 
+# set up for first use
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup', 'index', 'blog']
+    
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
-
+# Home - shows users
 @app.route('/')
 def index():
     users = User.query.all()
     return render_template('index.html', users=users, header='Blog Users')
 
-
+# display all posts
 @app.route('/blog')
 def blog():
     posts = Blog.query.all()
@@ -65,7 +67,7 @@ def blog():
 
     return render_template('blog.html', posts=posts, header='All Blog Posts')
 
-
+# new post
 @app.route('/newpost', methods=['POST', 'GET'])
 def new_post():
     owner = User.query.filter_by(username=session['username']).first()
@@ -92,7 +94,7 @@ def new_post():
 
     return render_template('newpost.html', header='New Blog Entry')
 
-
+# login
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
@@ -100,21 +102,15 @@ def login():
         password = request.form['password']
 
         user = User.query.filter_by(username=username).first()  # if user doesn't exist, user == None
-        if user and user.password == password:  
+        if user and user.password == password:  # conditional breaks if user == None
             session['username'] = username
-            flash('You are logged in!')
+            flash('Logged in')
             return redirect('/newpost')
-            
-        elif not user:
-            flash('User does not exist', 'error')
-           
-        
         else:
-            flash('Password is incorrect', 'error')
+            flash('User password is incorrect, or user does not exist', 'error')
 
     return render_template('login.html', header='Login')
-
-
+# signup
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
     if request.method == 'POST':
@@ -130,9 +126,7 @@ def signup():
         elif len(username) < 3 or len(password) < 3:
             flash('Username and password must be more than 3 characters', 'error')
         elif password != verify:
-            flash('Password does not match', "error")
-        
-        
+            flash('Password does not match', "error")     
         else:
             new_user = User(username, password)
             db.session.add(new_user)
@@ -142,12 +136,14 @@ def signup():
 
     return render_template('signup.html', header='Signup')
 
-
+# removes user session and redirects to blog
 @app.route('/logout')
 def logout():
-    del session['username']
+    
+    session.clear()
+    
     return redirect('/blog')
-
+ 
 
 if __name__ == "__main__":
     app.run()

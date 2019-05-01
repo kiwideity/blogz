@@ -5,48 +5,51 @@
    
     <style>
         h1{
-            text-align: left;          
+            text-align: left; 
+            text-decoration: underline;         
         }
         .error{
             color: red;
         }
+   	.topnav {
+  		background-color: rgb(95, 93, 93);
+  		overflow: hidden;
+  		width: 419px;
+		}
+
+	.topnav a {
+  		float: left;
+ 		color: #f2f2f2;
+  		text-align: center;
+  		padding: 14px 16px;
+  		text-decoration: none;
+  		font-size: 17px;
+		}
+
+	.topnav a:hover {
+  		background-color: #ddd;
+  		color: black;
+		}
+		
+	
+    
    
-    .right {
-    	float:right;
-		text-align: left;
-		padding:20px;
-		font-size:16px;
-		font-weight:bold;
-	}
-	.left{
-		float:left;
-		text-align: right;
-		padding:20px;
-		font-size:16px;
-		font-weight:bold;
-
-
-
-
-}
     </style>
 </head>
 <body>
     
-        <div class='left'>
+    
+        <div class='topnav'>
             <a href="/">Home</a>
 			<a href="/blog">All Posts</a>
 			<a href="/newpost">New Post</a>
-			
-        </div>
-    
-    <div class= "right">
 			<a href="/login">Login</a>
 			<a href="/logout">Logout</a>
         </div>
-    <br>
-    <br>
+ 
     <h1>{{header}}</h1>
+    
+
     
     {% with messages = get_flashed_messages(with_categories=True) %}
     <ul>

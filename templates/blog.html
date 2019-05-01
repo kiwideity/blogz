@@ -9,10 +9,12 @@
     {% else %}
     
     {% for post in posts %}
-    
+    <p><small>written by <a href="/blog?user={{post.owner_id}}">{{post.owner.username}}</a> on {{post.pub_date}} UTC</small></p>
     <a href="/blog?id={{post.id}}"><h2>{{post.title}}</h2></a>
-    <p>{{post.body}}</p>
-    <hr>            
+    <p>{{post.body}}</p> 
+    
+    
+    <hr>          
     
     {% endfor %}  
 
