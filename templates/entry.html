@@ -2,6 +2,10 @@
 
 {% block content %}
     <h1>{{post.title}}</h1>
+    <br>
+    <br>
+    <br>
+    <br>
     <p>{{post.body}}</p>
     <p><small>written by <a href="/blog?user={{post.owner_id}}">{{post.owner.username}}</a> on {{post.pub_date}} UTC</small></p>          
 {% endblock %}
