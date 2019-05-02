@@ -7,9 +7,9 @@ app.config['DEBUG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://blogz:bandit@localhost:8889/blogz'
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
-app.secret_key = "laughter"
+app.secret_key = "mF7%z9LWw4$zj20a"
 
-# Ammended Blog class
+
 class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120))
@@ -25,7 +25,7 @@ class Blog(db.Model):
         self.pub_date = pub_date
         self.owner = owner
 
-# user class
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120), unique=True)
@@ -36,22 +36,20 @@ class User(db.Model):
         self.username = username
         self.password = password
 
-allowed_routes = ['login', 'signup', 'index', 'blog', 'logout']        
 
-# set up for first use
 @app.before_request
 def require_login():
-    
+    allowed_routes = ['login', 'signup', 'index', 'blog', 'logout']
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
-# Home - shows users
+
 @app.route('/')
 def index():
     users = User.query.all()
     return render_template('index.html', users=users, header='Blog Users')
 
-# display all posts
+
 @app.route('/blog')
 def blog():
     posts = Blog.query.all()
@@ -67,7 +65,7 @@ def blog():
 
     return render_template('blog.html', posts=posts, header='All Blog Posts')
 
-# new post
+
 @app.route('/newpost', methods=['POST', 'GET'])
 def new_post():
     owner = User.query.filter_by(username=session['username']).first()
@@ -94,7 +92,7 @@ def new_post():
 
     return render_template('newpost.html', header='New Blog Entry')
 
-# login
+
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
@@ -110,7 +108,8 @@ def login():
             flash('User password is incorrect, or user does not exist', 'error')
 
     return render_template('login.html', header='Login')
-# signup
+
+
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
     if request.method == 'POST':
@@ -119,14 +118,16 @@ def signup():
         verify = request.form['verify']
 
         existing_user = User.query.filter_by(username=username).first()
-        if existing_user:
-            flash('User already exists', 'error')
-        elif  username == "" or password =="" or verify == "":
+
+        if username =="" or password == ""or verify =="":
             flash('Fields cannot be empty', "error")
+        elif existing_user:
+            flash('User already exists', 'error')
         elif len(username) < 3 or len(password) < 3:
             flash('Username and password must be more than 3 characters', 'error')
         elif password != verify:
-            flash('Password does not match', "error")     
+            flash('Password does not match', "error")
+              
         else:
             new_user = User(username, password)
             db.session.add(new_user)
@@ -136,14 +137,12 @@ def signup():
 
     return render_template('signup.html', header='Signup')
 
-# removes user session and redirects to blog
+
 @app.route('/logout')
 def logout():
-    
     session.clear()
-    
     return redirect('/blog')
- 
+
 
 if __name__ == "__main__":
     app.run()
